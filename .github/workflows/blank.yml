@@ -33,7 +33,7 @@ env:
   GIT_USER_TOKEN: ${{ secrets.GIT_USER_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-  GITHUB_RELEASE: https://github.com/aoxijy/GanQuanRu/releases
+  GITHUB_RELEASE: https://github.com/aoxiyu/JGYU/releases
 
 jobs: 
   build:
@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Lean_x86_64,Lean_x86_64_Long]  #[Lean_x86_64,Lean_x86_64_Long]
+        target: [Mini_x64,Docker_x64]  #[Mini_x64,Docker_x64]
 
     steps:
     - name: 准备完成
@@ -73,6 +73,7 @@ jobs:
         #添加变量
         echo "HOME=${GITHUB_WORKSPACE}/openwrt" >> $GITHUB_ENV
         echo "WORKPATH=${GITHUB_WORKSPACE}/openwrt/build/${{matrix.target}}" >> $GITHUB_ENV
+
     - name: 初始化系统环境
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -88,16 +89,20 @@ jobs:
         sudo -E systemctl daemon-reload
         sudo -E apt -y autoremove --purge
         sudo -E apt clean
+
         df -hT
+
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
+
     - name: 下载${{matrix.target}}源码
       working-directory: /workdir
       run: |
         df -hT $PWD
         git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+
     - name: 缓存加速
       uses: klever1988/cachewrtbuild@main
       if: env.CACHE_BUILD == 'true'
@@ -115,11 +120,13 @@ jobs:
         echo "编译开始时间..."
         START_TIME=`date +'%Y-%m-%d %H:%M:%S'`
         echo "START_SECONDS=$(date --date="$START_TIME" +%s)" >> $GITHUB_ENV
+
     - name: 加载源,定制文件并生成自定义配置
       run: |
         # 复制配置文件到源码目录
         cp -Rf `find ./ -maxdepth 1 -type d ! -path './openwrt' ! -path './'` openwrt
         cd openwrt
+
         echo "执行脚本"
         if [ -f "${WORKPATH}/$CUSTOM_SH" ]; then
         (
@@ -127,6 +134,7 @@ jobs:
           /bin/bash "${WORKPATH}/$CUSTOM_SH"
         )
         fi
+
         echo "复制脚本文件..."
         if [ -n "$(ls -A "${GITHUB_WORKSPACE}/openwrt/build/scripts/files" 2>/dev/null)" ]; then
           if [ -d "files" ];then
@@ -137,6 +145,7 @@ jobs:
            chmod -R 755 ${HOME}/files
           fi
         fi
+
         echo "复制配置文件..."
         if [ -n "$(ls -A "${WORKPATH}/files" 2>/dev/null)" ]; then
           if [ -d "files" ];then
@@ -147,13 +156,16 @@ jobs:
            chmod -R 755 ${WORKPATH}/files
           fi
         fi
+
         echo "复制源码文件..."
         if [ -n "$(ls -A "${WORKPATH}/sources" 2>/dev/null)" ]; then
          cp -Rf ${WORKPATH}/sources/* ./
         fi
+
         echo "写入配置文件..."
         mv ${WORKPATH}/$CONFIG_FILE .config
         make defconfig
+
     - name: SSH远程连接服务器
       uses: danshui-git/debugger-action@main
       if: env.SSH_ACTIONS == 'true' || (github.event.inputs.SSH_ACTION == 'true')
@@ -170,13 +182,16 @@ jobs:
         echo
         echo "=========================================="
         echo
+
         ZZZ="package/lean/default-settings/files/zzz-default-settings"
         echo "DISTRIB_REVISION=$(cat $ZZZ|grep DISTRIB_REVISION= | sed 's/^.\{24\}//g' | sed 's/.\{26\}$//')" >> $GITHUB_ENV
         echo "KERNEL_PATCHVER=$(cat target/linux/x86/Makefile|grep KERNEL_PATCHVER | sed 's/^.\{17\}//g')" >> $GITHUB_ENV
         echo "	    当前编译版本：$(cat $ZZZ|grep DISTRIB_REVISION= | sed 's/^.\{24\}//g' | sed 's/.\{26\}$//')"
         echo "	    内核版本：$(cat target/linux/x86/Makefile|grep KERNEL_PATCHVER | sed 's/^.\{17\}//g')"
+
         echo
         echo "=========================================="
+
         grep -i CONFIG_PACKAGE_luci-app .config | grep  -v \# > Plug-in
         grep -i CONFIG_PACKAGE_luci-theme .config | grep  -v \# >> Plug-in
         sed -i '/INCLUDE/d' Plug-in > /dev/null 2>&1
@@ -186,30 +201,36 @@ jobs:
         sed -i 's/=y/\ /g' Plug-in
         awk '$0=NR$0' Plug-in > Plug-2
         awk '{print "	" $0}' Plug-2 > Plug-in
+
         echo
         echo
         echo "	      已选插件列表"
         cat Plug-in
         rm -rf {Plug-in,Plug-2}
+
         echo
         echo "=========================================="
+
         echo
         echo
         echo "输出完整插件信息..."
         echo
         echo
         cat .config
+
     - name: 下载编译所需文件
       run: |
         cd openwrt && make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
+
     - name: 开始编译固件
       id: compile
       run: |
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
         make -j$(($(nproc)+1)) || make -j1 V=s
+
     - name: 检查空间使用情况
       run: |
         echo "======================="
@@ -220,6 +241,7 @@ jobs:
         du -h --max-depth=1 openwrt/ --exclude=build_dir --exclude=bin
         du -h --max-depth=1 openwrt/build_dir
         du -h --max-depth=1 openwrt/bin
+
     - name: 整理固件文件
       id: organizer
       run: |
@@ -244,6 +266,7 @@ jobs:
         SECONDS=$((END_SECONDS-START_SECONDS))
         HOUR=$(( $SECONDS/3600 )) && MIN=$(( ($SECONDS-${HOUR}*3600)/60 )) && SEC=$(( $SECONDS-${HOUR}*3600-${MIN}*60 ))
         echo "BUILD_TIME=${HOUR}时${MIN}分${SEC}秒" >> $GITHUB_ENV
+
     - name: 上传固件文件
       if: steps.compile.outcome == 'success' && env.UPLOAD_FIRMWARE == 'true'
       uses: actions/upload-artifact@main
@@ -297,12 +320,19 @@ jobs:
             ★  源码 : ${{ env.REPO_URL }}
             ★  分支 : ${{ env.REPO_BRANCH }}
             ★  感谢源码作者无私分享！
+
             🛠 编译版本：${{ env.DISTRIB_REVISION }}
+
             🖥 内核版本：${{ env.KERNEL_PATCHVER }}
+
             🎈 编译时间：${{ env.FILE_TIME1 }}
+
             ⏰ 编译用时：${{ env.BUILD_TIME }}
+
             🎉 [ ${{ env.FIRMWARE_MESSAGE }} ]固件下载
+
             =========================================
+
         artifacts: ./artifact/firmware/*
 
     - name: 删除运行记录
@@ -324,9 +354,17 @@ jobs:
       if: steps.compile.outcome == 'success' && env.TELEGRAM_BOT == 'true'
       run: |
         curl "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=您的${{ env.FIRMWARE_MESSAGE }}固件成功编译完成了！
+
           🛠 编译版本：${{ env.DISTRIB_REVISION }}
+
           🖥 内核版本：${{ env.KERNEL_PATCHVER }}
+
           🎈 编译时间：${{ env.FILE_TIME1 }}
+
           ⏰ 编译用时：${{ env.BUILD_TIME }}
+
           🎉 发布地址：${{ env.GITHUB_RELEASE }}
+
           🌴 固件已经编译完成 🎈！！！" >/dev/null 2>&1 && echo "ok..."
+
+
