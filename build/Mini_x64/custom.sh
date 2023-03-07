@@ -104,7 +104,7 @@ if [ $? -eq 0 ]; then
   fi
   rm -rf $HOME/clash-core/clash-linux-amd64.tar.gz
 # 下载Meta内核
-  wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-amd64.tar.gz
+  wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/dev/clash-linux-amd64.tar.gz
   if [[ $? -ne 0 ]];then
     wget -q https://raw.githubusercontent.com/vernesong/OpenClash/master/core-lateset/meta/clash-linux-amd64.tar.gz
   else
@@ -124,7 +124,7 @@ if [ $? -eq 0 ]; then
   TUN="$(grep -Eo "clash-linux-amd64-.*.gz" premium.api |grep -v 'v3' |awk 'NR==1')"
   wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/premium/$TUN
   if [[ $? -ne 0 ]];then
-    wget -q https://raw.githubusercontent.com/vernesong/OpenClash/master/core-lateset/premium/$TUN
+    wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/premium/$TUN
   else
     echo "OpenClash TUN内核压缩包下载成功，开始解压文件"
   fi
