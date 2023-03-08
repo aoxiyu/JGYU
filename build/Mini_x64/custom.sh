@@ -9,7 +9,7 @@
 cat feeds.conf.default
 
 # 添加第三方软件包
-git clone https://github.com/aoxijy/jac-package package/jac-package
+git clone https://github.com/aoxiyu/yu-package package/yu-package
 
 # 更新并安装源
 ./scripts/feeds clean
