@@ -258,6 +258,7 @@ CONFIG_PACKAGE_luci-app-openclash=y #OpenClash客户端
 CONFIG_PACKAGE_luci-app-poweroff=y #关机（增加关机功能）
 CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-npc=y
+CONFIG_PACKAGE_nps=y
 # CONFIG_PACKAGE_luci-app-argon-config=n #argon主题设置
 CONFIG_PACKAGE_luci-theme-atmaterial_new=y #atmaterial 三合一主题
 CONFIG_PACKAGE_luci-theme-design=y #design 主题
