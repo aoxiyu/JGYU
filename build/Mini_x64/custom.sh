@@ -9,7 +9,7 @@
 cat feeds.conf.default
 
 # 添加第三方软件包
-git clone https://github.com/aoxiyu/Lienol-packages Lienol-packages/yu-package
+git clone https://github.com/aoxiyu/Lienol-packages package/Lienol-packages
 
 # 更新并安装源
 ./scripts/feeds clean
