@@ -271,8 +271,7 @@ EOF
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-ssr-plus=y
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_SagerNet_Core is not set
-CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Client=n
-CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Libev_Server=n
+
 EOF
 
 # Passwall插件:
@@ -284,8 +283,6 @@ CONFIG_PACKAGE_chinadns-ng=y
 CONFIG_PACKAGE_trojan-go=y
 CONFIG_PACKAGE_xray-plugin=y
 CONFIG_PACKAGE_shadowsocks-rust-sslocal=y
-CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Client=n
-CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR_Libev_Server=n
 
 EOF
 
