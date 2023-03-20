@@ -104,9 +104,9 @@ if [ $? -eq 0 ]; then
   fi
   rm -rf $HOME/clash-core/clash-linux-amd64.tar.gz
 # 下载Meta内核
-  wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/dev/clash-linux-amd64.tar.gz
+  wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-amd64.tar.gz
   if [[ $? -ne 0 ]];then
-    wget -q https://raw.githubusercontent.com/vernesong/OpenClash/master/core-lateset/meta/clash-linux-amd64.tar.gz
+    wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-amd64.tar.gz
   else
     echo "OpenClash Meta内核压缩包下载成功，开始解压文件"
   fi
@@ -120,8 +120,8 @@ if [ $? -eq 0 ]; then
   fi
   rm -rf $HOME/clash-core/clash-linux-amd64.tar.gz
 # 下载TUN内核
-  curl -H "Authorization: Bearer ${GIT_USER_TOKEN}" https://api.github.com/repos/vernesong/OpenClash/contents/core-lateset/premium -o premium.api
-  TUN="$(grep -Eo "clash-linux-amd64-.*.gz" premium.api |grep -v 'v3' |awk 'NR==1')"
+  wget -q  https://raw.githubusercontent.com/vernesong/OpenClash/core/master/core_version
+  TUN="clash-linux-amd64-"$(sed -n '2p' core_version)".gz"
   wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/premium/$TUN
   if [[ $? -ne 0 ]];then
     wget -q https://raw.githubusercontent.com/vernesong/OpenClash/core/master/premium/$TUN
@@ -283,7 +283,6 @@ CONFIG_PACKAGE_chinadns-ng=y
 CONFIG_PACKAGE_trojan-go=y
 CONFIG_PACKAGE_xray-plugin=y
 CONFIG_PACKAGE_shadowsocks-rust-sslocal=y
-
 EOF
 
 # Turbo ACC 网络加速:
