@@ -21,7 +21,7 @@ on:
 
 # 定时触发编译(1,2,5,6,8,10,12,15,16,18,20,22,25,26,28,30早3点)
   schedule:
-    - cron: 00 00 * * 0
+    - cron: 0 19 1,4,5,7,9,11,14,15,17,19,21,24,25,27,29,31 * *
 
 # 点赞☆Star触发编译
 #  watch:
@@ -31,6 +31,8 @@ on:
 env: 
   TZ: Asia/Shanghai
   GIT_USER_TOKEN: ${{ secrets.GIT_USER_TOKEN }}
+  WECHAT_WORK_URL: ${{ secrets.WECHAT_WORK_URL }}
+  WECHAT_WORK_TOKEN: ${{ secrets.WECHAT_WORK_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   GITHUB_RELEASE: https://github.com/aoxiyu/JGYU/releases
@@ -44,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [Mini_x64,Docker_x64]  #[Mini_x64,Docker_x64]
+        target: [Lean_x86_64,Lean_x86_64_Long]  #[Lean_x86_64,Lean_x86_64_Long]
 
     steps:
     - name: 准备完成
@@ -275,14 +277,14 @@ jobs:
         path: ./artifact/firmware/
 
     - name: 上传PVE/KVM镜像文件
-      if: steps.compile.outcome == 'success' && env.UPLOAD_QCOW2 == 'false'
+      if: steps.compile.outcome == 'success' && env.UPLOAD_QCOW2 == 'true'
       uses: actions/upload-artifact@main
       with:
         name: OpenWrt_pvekvm_${{matrix.target}}_${{ env.FILE_TIME }}
         path: ./artifact/pvekvm/
 
     - name: 上传Hyper-V镜像文件
-      if: steps.compile.outcome == 'success' && env.UPLOAD_VHDX == 'false'
+      if: steps.compile.outcome == 'success' && env.UPLOAD_VHDX == 'true'
       uses: actions/upload-artifact@main
       with:
         name: OpenWrt_hyperv_${{matrix.target}}_${{ env.FILE_TIME }}
@@ -309,6 +311,15 @@ jobs:
         name: OpenWrt_buildinfo_${{matrix.target}}_${{ env.FILE_TIME }}
         path: ./artifact/buildinfo/
 
+    - name: 上传固件到 WeTransfer
+      if: steps.compile.outcome == 'success' && env.UPLOAD_WETRANSFER == 'true'
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress ./artifact/firmware/ 2>&1 | tee wetransfer.log
+        echo "WETRANSFER_URL=$(cat wetransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
+        sed -i "s/Download Link/WeTransfer/g" wetransfer.log
+        echo "::warning file=WeTransfer::$(cat wetransfer.log | grep https)"
+
     - name: 自动发布固件到 Releases
       uses: ncipollo/release-action@main
       if: steps.compile.outcome == 'success' && env.UPLOAD_RELEASE == 'true'
@@ -331,6 +342,12 @@ jobs:
 
             🎉 [ ${{ env.FIRMWARE_MESSAGE }} ]固件下载
 
+            ━━━━━━━━━━━━━━━━━━━━
+
+            ➤ WeTransfer： ${{ env.WETRANSFER_URL }}
+
+               WeTransfer链接有效期为7天，无需注册直接下载
+
             =========================================
 
         artifacts: ./artifact/firmware/*
@@ -350,6 +367,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GIT_USER_TOKEN }}
 
+    - name: 编译成功信息通知-企业微信
+      if: steps.compile.outcome == 'success' && env.WECHAT_WORK_PUSH == 'true'
+      run: |
+        curl "http://${{ secrets.WECHAT_WORK_URL }}/push?token=${{ secrets.WECHAT_WORK_TOKEN }}&message=您的${{ env.FIRMWARE_MESSAGE }}固件成功编译完成了！%0a%0a🎈编译时间：${{ env.FILE_TIME1 }}%0a%0a🛠编译版本：${{ env.DISTRIB_REVISION }}%0a%0a🖥内核版本：${{ env.KERNEL_PATCHVER }}%0a%0a⏰编译用时：${{ env.BUILD_TIME }}%0a%0a🎉发布地址：${{ env.GITHUB_RELEASE }}%0a%0a⛄WeTransfer：${{ env.WETRANSFER_URL }}%0a%0a🌴固件已经编译完成🎈！！！" || true
+
     - name: 编译成功信息通知-Telegram
       if: steps.compile.outcome == 'success' && env.TELEGRAM_BOT == 'true'
       run: |
@@ -364,6 +386,8 @@ jobs:
           ⏰ 编译用时：${{ env.BUILD_TIME }}
 
           🎉 发布地址：${{ env.GITHUB_RELEASE }}
+
+          ⛄ WeTransfer：${{ env.WETRANSFER_URL }}
 
           🌴 固件已经编译完成 🎈！！！" >/dev/null 2>&1 && echo "ok..."
 
