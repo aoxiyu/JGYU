@@ -20,7 +20,6 @@ rm -rf feeds/luci/applications/luci-app-qbittorrent
 rm -rf feeds/luci/themes/luci-theme-argon
 rm -rf feeds/packages/net/haproxy
 rm -rf package/lean/autocore
-rm -rf luci-theme-neobird
 
 # 自定义定制选项
 NET="package/base-files/files/bin/config_generate"
@@ -33,28 +32,29 @@ sed -i 's#192.168.1.1#192.168.9.222#g' $NET                                     
 sed -i 's#OpenWrt#GanQuanRu#g' $NET                                                     # 修改默认名称为OpenWrt-X86
 sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' $ZZZ                                             # 取消系统默认密码
 sed -i "s/OpenWrt /GanQuanRu build $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" $ZZZ              # 增加自己个性名称
-sed -i "s/$KERNEL_PATCHVER/$KERNEL_TESTING_PATCHVER/g" target/linux/x86/Makefile        # 修改内核版本为最新
+# sed -i "s/$KERNEL_PATCHVER/$KERNEL_TESTING_PATCHVER/g" target/linux/x86/Makefile        # 修改内核版本为最新
 # sed -i "/uci commit luci/i\uci set luci.main.mediaurlbase=/luci-static/neobird" $ZZZ        # 设置默认主题(如果编译可会自动修改默认主题的，有可能会失效)
 # sed -i 's#localtime  = os.date()#localtime  = os.date("%Y年%m月%d日") .. " " .. translate(os.date("%A")) .. " " .. os.date("%X")#g' package/lean/autocore/files/*/index.htm               # 修改默认时间格式
 
 # ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● #
-sed -i 's#%D %V, %C#%D %V, %C GanQuanRu#g' package/base-files/files/etc/banner               # 自定义banner显示
+sed -i 's#%D %V, %C#%D %V, %C Lean_x86_64#g' package/base-files/files/etc/banner               # 自定义banner显示
 sed -i 's@list listen_https@# list listen_https@g' package/network/services/uhttpd/files/uhttpd.config               # 停止监听443端口
 # sed -i 's#option commit_interval 24h#option commit_interval 10m#g' feeds/packages/net/nlbwmon/files/nlbwmon.config               # 修改流量统计写入为10分钟
 # sed -i 's#option database_generations 10#option database_generations 3#g' feeds/packages/net/nlbwmon/files/nlbwmon.config               # 修改流量统计数据周期
 # sed -i 's#option database_directory /var/lib/nlbwmon#option database_directory /etc/config/nlbwmon_data#g' feeds/packages/net/nlbwmon/files/nlbwmon.config               # 修改流量统计数据存放默认位置
 sed -i 's#interval: 5#interval: 1#g' feeds/luci/applications/luci-app-wrtbwmon/htdocs/luci-static/wrtbwmon/wrtbwmon.js               # wrtbwmon默认刷新时间更改为1秒
+sed -i '/exit 0/i\ethtool -s eth0 speed 2500 duplex full' package/base-files/files//etc/rc.local               # 强制显示2500M和全双工（默认PVE下VirtIO不识别）
 
 # ●●●●●●●●●●●●●●●●●●●●●●●●定制部分●●●●●●●●●●●●●●●●●●●●●●●● #
 
 cat >> $ZZZ <<-EOF
 # 设置旁路由模式
 uci set network.lan.gateway='192.168.9.1'                     # 旁路由设置 IPv4 网关
-uci set network.lan.dns='223.5.5.5 114.114.114.114'            # 旁路由设置 DNS(多个DNS要用空格分开)
-uci set network.lan.delegate='0'                             # 去掉LAN口使用内置的 IPv6 管理(若用IPV6请把'0'改'1')
-uci set dhcp.@dnsmasq[0].filter_aaaa='1'                     # 禁止解析 IPv6 DNS记录(若用IPV6请把'1'改'0')
+uci set network.lan.dns='223.5.5.5 119.29.29.29'            # 旁路由设置 DNS(多个DNS要用空格分开)
 uci set dhcp.lan.ignore='1'                                  # 旁路由关闭DHCP功能
 uci delete network.lan.type                                  # 旁路由桥接模式-禁用
+uci set network.lan.delegate='0'                             # 去掉LAN口使用内置的 IPv6 管理(若用IPV6请把'0'改'1')
+uci set dhcp.@dnsmasq[0].filter_aaaa='1'                     # 禁止解析 IPv6 DNS记录(若用IPV6请把'1'改'0')
 
 # 旁路IPV6需要全部禁用
 uci set network.lan.ip6assign=''                             # IPV6分配长度-禁用
@@ -63,12 +63,12 @@ uci set dhcp.lan.dhcpv6=''                                   # DHCPv6 服务-禁
 uci set dhcp.lan.ra_management=''                            # DHCPv6 模式-禁用
 
 # 如果有用IPV6的话,可以使用以下命令创建IPV6客户端(LAN口)（去掉全部代码uci前面#号生效）
-# uci set network.ipv6=interface
-# uci set network.ipv6.proto='dhcpv6'
-# uci set network.ipv6.ifname='@lan'
-# uci set network.ipv6.reqaddress='try'
-# uci set network.ipv6.reqprefix='auto'
-# uci set firewall.@zone[0].network='lan ipv6'
+uci set network.ipv6=interface
+uci set network.ipv6.proto='dhcpv6'
+uci set network.ipv6.ifname='eth0'
+uci set network.ipv6.reqaddress='try'
+uci set network.ipv6.reqprefix='auto'
+uci set firewall.@zone[0].network='lan ipv6'
 
 EOF
 
@@ -193,7 +193,7 @@ EOF
 # 设置固件大小:
 cat >> .config <<EOF
 CONFIG_TARGET_KERNEL_PARTSIZE=16
-CONFIG_TARGET_ROOTFS_PARTSIZE=280
+CONFIG_TARGET_ROOTFS_PARTSIZE=360
 EOF
 
 # 固件压缩:
@@ -255,11 +255,10 @@ CONFIG_PACKAGE_luci-app-openclash=y #OpenClash客户端
 # CONFIG_PACKAGE_luci-app-control-weburl=n #网址过滤
 # CONFIG_PACKAGE_luci-app-smartdns=n #smartdns服务器
 # CONFIG_PACKAGE_luci-app-adguardhome=n #ADguardhome
-CONFIG_PACKAGE_luci-app-poweroff=y #关机（增加关机功能）
 CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-npc=y
-CONFIG_PACKAGE_nps=y
-# CONFIG_PACKAGE_luci-app-argon-config=n #argon主题设置
+CONFIG_PACKAGE_luci-app-poweroff=y #关机（增加关机功能）
+# CONFIG_PACKAGE_luci-app-argon-config=y #argon主题设置
 CONFIG_PACKAGE_luci-theme-atmaterial_new=y #atmaterial 三合一主题
 CONFIG_PACKAGE_luci-theme-design=y #design 主题
 CONFIG_PACKAGE_luci-app-autotimeset=y #定时重启系统，网络
@@ -271,7 +270,6 @@ EOF
 cat >> .config <<EOF
 CONFIG_PACKAGE_luci-app-ssr-plus=y
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_SagerNet_Core is not set
-
 EOF
 
 # Passwall插件:
@@ -296,15 +294,14 @@ CONFIG_PACKAGE_luci-app-adbyby-plus=n #adbyby去广告
 CONFIG_PACKAGE_luci-app-webadmin=n #Web管理页面设置
 CONFIG_PACKAGE_luci-app-ddns=n #DDNS服务
 CONFIG_DEFAULT_luci-app-vlmcsd=n #KMS激活服务器
-CONFIG_PACKAGE_luci-app-filetransfer=n #系统-文件传输
+CONFIG_PACKAGE_luci-app-filetransfer=y #系统-文件传输
 CONFIG_PACKAGE_luci-app-autoreboot=n #定时重启
 CONFIG_PACKAGE_luci-app-upnp=n #通用即插即用UPnP(端口自动转发)
 CONFIG_PACKAGE_luci-app-arpbind=n #IP/MAC绑定
 CONFIG_PACKAGE_luci-app-accesscontrol=n #上网时间控制
-CONFIG_PACKAGE_luci-app-wol=n #网络唤醒
+CONFIG_PACKAGE_luci-app-wol=y #网络唤醒
 CONFIG_PACKAGE_luci-app-nps=n #nps内网穿透
 CONFIG_PACKAGE_luci-app-frpc=n #Frp内网穿透
-CONFIG_PACKAGE_luci-app-frps=n
 CONFIG_PACKAGE_luci-app-nlbwmon=y #宽带流量监控
 CONFIG_PACKAGE_luci-app-wrtbwmon=y #实时流量监测
 CONFIG_PACKAGE_luci-app-haproxy-tcp=n #Haproxy负载均衡
