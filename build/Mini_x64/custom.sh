@@ -252,7 +252,7 @@ EOF
 cat >> .config <<EOF
 # CONFIG_PACKAGE_luci-app-oaf=n #应用过滤
 CONFIG_PACKAGE_luci-app-openclash=y #OpenClash客户端
-# CONFIG_PACKAGE_luci-app-serverchan=y #微信推送
+CONFIG_PACKAGE_luci-app-wechatpush=y #微信推送
 # CONFIG_PACKAGE_luci-app-eqos=n #IP限速
 # CONFIG_PACKAGE_luci-app-control-weburl=n #网址过滤
 # CONFIG_PACKAGE_luci-app-smartdns=n #smartdns服务器
@@ -302,7 +302,7 @@ CONFIG_PACKAGE_luci-app-upnp=n #通用即插即用UPnP(端口自动转发)
 CONFIG_PACKAGE_luci-app-arpbind=n #IP/MAC绑定
 CONFIG_PACKAGE_luci-app-accesscontrol=n #上网时间控制
 CONFIG_PACKAGE_luci-app-wol=n #网络唤醒
-CONFIG_PACKAGE_luci-app-nps=y #nps内网穿透
+CONFIG_PACKAGE_luci-app-npc=y #nps内网穿透
 CONFIG_PACKAGE_luci-app-frpc=y #Frp内网穿透
 CONFIG_PACKAGE_luci-app-nlbwmon=y #宽带流量监控
 CONFIG_PACKAGE_luci-app-wrtbwmon=y #实时流量监测
