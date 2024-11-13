@@ -5,10 +5,12 @@
 # sudo -E apt-get -y install rename
 
 # 更新feeds文件
+sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
 # sed -i 's@#src-git helloworld@src-git helloworld@g' feeds.conf.default #启用helloworld
 cat feeds.conf.default
 
 # 添加第三方软件包
+git clone https://github.com/asvow/luci-app-tailscale package/luci-app-tailscale
 git clone https://github.com/aoxiyu/aoxi-package package/aoxi-package
 
 # 更新并安装源
