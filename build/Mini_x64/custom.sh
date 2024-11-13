@@ -193,7 +193,7 @@ EOF
 # 设置固件大小:
 cat >> .config <<EOF
 CONFIG_TARGET_KERNEL_PARTSIZE=16
-CONFIG_TARGET_ROOTFS_PARTSIZE=360
+CONFIG_TARGET_ROOTFS_PARTSIZE=400
 EOF
 
 # 固件压缩:
@@ -256,8 +256,7 @@ CONFIG_PACKAGE_luci-app-openclash=y #OpenClash客户端
 # CONFIG_PACKAGE_luci-app-smartdns=n #smartdns服务器
 # CONFIG_PACKAGE_luci-app-adguardhome=n #ADguardhome
 CONFIG_PACKAGE_luci-app-ddns-go=y
-CONFIG_PACKAGE_luci-app-npc=y
-CONFIG_PACKAGE_luci-app-alist=y
+CONFIG_PACKAGE_luci-app-alist=n
 CONFIG_PACKAGE_luci-app-poweroff=y #关机（增加关机功能）
 # CONFIG_PACKAGE_luci-app-argon-config=y #argon主题设置
 CONFIG_PACKAGE_luci-theme-atmaterial_new=y #atmaterial 三合一主题
@@ -301,8 +300,8 @@ CONFIG_PACKAGE_luci-app-upnp=n #通用即插即用UPnP(端口自动转发)
 CONFIG_PACKAGE_luci-app-arpbind=n #IP/MAC绑定
 CONFIG_PACKAGE_luci-app-accesscontrol=n #上网时间控制
 CONFIG_PACKAGE_luci-app-wol=n #网络唤醒
-CONFIG_PACKAGE_luci-app-nps=n #nps内网穿透
-CONFIG_PACKAGE_luci-app-frpc=n #Frp内网穿透
+CONFIG_PACKAGE_luci-app-nps=y #nps内网穿透
+CONFIG_PACKAGE_luci-app-frpc=y #Frp内网穿透
 CONFIG_PACKAGE_luci-app-nlbwmon=y #宽带流量监控
 CONFIG_PACKAGE_luci-app-wrtbwmon=y #实时流量监测
 CONFIG_PACKAGE_luci-app-haproxy-tcp=n #Haproxy负载均衡
