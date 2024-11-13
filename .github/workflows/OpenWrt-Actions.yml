@@ -39,7 +39,7 @@ env:
   GIT_USER_TOKEN: ${{ secrets.GIT_USER_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-  GITHUB_RELEASE: https://github.com/aoxijy/GanQuanRu-op/releases
+  GITHUB_RELEASE: https://github.com/aoxiyu/JGYU/releases
 
 jobs: 
   build:
@@ -50,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [gqru_mini,gqru_docker]  #[gqru_mini,gqru_docker]
+        target: [Mini_x64,Docker_x64]  #[Mini_x64,Docker_x64]
 
     steps:
     - name: 检查文件
