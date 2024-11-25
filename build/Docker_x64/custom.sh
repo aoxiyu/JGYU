@@ -11,7 +11,7 @@ cat feeds.conf.default
 
 # 添加第三方软件包
 git clone https://github.com/asvow/luci-app-tailscale package/luci-app-tailscale
-git clone https://github.com/db-one/dbone-packages.git -b 23.05 package/dbone-packages
+git clone https://github.com/aoxiyu/aoxi-package.git package/aoxi-package
 
 # 更新并安装源
 ./scripts/feeds clean
@@ -305,8 +305,8 @@ CONFIG_PACKAGE_luci-app-accesscontrol=n #上网时间控制
 CONFIG_PACKAGE_luci-app-wol=n #网络唤醒
 CONFIG_PACKAGE_luci-app-npc=y #nps内网穿透
 CONFIG_PACKAGE_luci-app-frpc=y #Frp内网穿透
-CONFIG_PACKAGE_luci-app-nlbwmon=y #宽带流量监控
-CONFIG_PACKAGE_luci-app-wrtbwmon=y #实时流量监测
+CONFIG_PACKAGE_luci-app-nlbwmon=n #宽带流量监控
+CONFIG_PACKAGE_luci-app-wrtbwmon=n #实时流量监测
 CONFIG_PACKAGE_luci-app-haproxy-tcp=n #Haproxy负载均衡
 CONFIG_PACKAGE_luci-app-diskman=n #磁盘管理磁盘信息
 CONFIG_PACKAGE_luci-app-transmission=n #Transmission离线下载
