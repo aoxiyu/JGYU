@@ -16,13 +16,13 @@ cp -rf /rom/etc/openclash/core/* /etc/openclash/core
 # uci commit system
 
 # 设置默认主题
-uci set luci.main.mediaurlbase='/luci-static/neobird' && uci commit luci
+uci set luci.main.mediaurlbase='/luci-static/design' && uci commit luci
 
 # 修改主机名称为OpenWrt-86
 # uci set system.@system[0].hostname='GanQuanRu'
 
 # 此文件名注意ls 排序，下面也行
-# sed -ri "/option mediaurlbase/s#(/luci-static/)[^']+#\neobird#" /etc/config/luci
+sed -ri "/option mediaurlbase/s#(/luci-static/)[^']+#\design#" /etc/config/luci
 # uci commit luci
 
 # 去掉CpuMark跑数，直接显示分数
