@@ -18,7 +18,6 @@ git clone https://github.com/aoxiyu/aoxi-package.git package/aoxi-package
 ./scripts/feeds update -a && ./scripts/feeds install -a -f
 
 # 删除部分默认包
-rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,natflow,urllogger,fullconenat,libnftnl,dogcom,nftables,ppp,opkg,ucl,upx,vsftpd*,miniupnpd-iptables,wireless-regdb}
 rm -rf feeds/luci/applications/luci-app-qbittorrent
 rm -rf feeds/luci/applications/luci-app-dogcom
 rm -rf feeds/luci/themes/luci-theme-argon
@@ -32,7 +31,7 @@ ZZZ="package/lean/default-settings/files/zzz-default-settings"
 KERNEL_PATCHVER=$(cat target/linux/x86/Makefile|grep KERNEL_PATCHVER | sed 's/^.\{17\}//g')
 KERNEL_TESTING_PATCHVER=$(cat target/linux/x86/Makefile|grep KERNEL_TESTING_PATCHVER | sed 's/^.\{25\}//g')
 #
-sed -i 's#172.18.18.222#172.18.18.222#g' $NET                                                    # 定制默认IP
+sed -i 's#172.18.18.22#172.18.18.222#g' $NET                                                    # 定制默认IP
 sed -i 's#GanQuanRu#GanQuanRu#g' $NET                                                     # 修改默认名称为OpenWrt-X86
 sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' $ZZZ                                             # 取消系统默认密码
 sed -i "s/OpenWrt /GanQuanRu build $(TZ=UTC-8 date "+%Y.%m.%d") @ OpenWrt /g" $ZZZ              # 增加自己个性名称
@@ -264,8 +263,8 @@ CONFIG_PACKAGE_luci-app-alist=n
 CONFIG_PACKAGE_luci-app-poweroff=y #关机（增加关机功能）
 # CONFIG_PACKAGE_luci-app-argon-config=y #argon主题设置
 CONFIG_PACKAGE_luci-theme-atmaterial_new=y #atmaterial 三合一主题
-CONFIG_PACKAGE_luci-theme-neobird=y #neobird 主题
-CONFIG_PACKAGE_luci-theme-design=y #design 主题
+CONFIG_PACKAGE_luci-theme-neobird=n #neobird 主题
+CONFIG_PACKAGE_luci-theme-design=n #design 主题
 CONFIG_PACKAGE_luci-app-autotimeset=n #定时重启系统，网络
 # CONFIG_PACKAGE_luci-app-ddnsto=n #小宝开发的DDNS.to内网穿透
 # CONFIG_PACKAGE_ddnsto=n #DDNS.to内网穿透软件包
