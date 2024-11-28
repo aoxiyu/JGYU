@@ -17,7 +17,6 @@ git clone https://github.com/aoxiyu/aoxi-package.git package/aoxi-package
 ./scripts/feeds update -a && ./scripts/feeds install -a -f
 
 # 删除部分默认包
-rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,natflow,urllogger,fullconenat,libnftnl,dogcom,nftables,ppp,opkg,ucl,upx,vsftpd*,miniupnpd-iptables,wireless-regdb}
 rm -rf feeds/luci/applications/luci-app-qbittorrent
 rm -rf feeds/luci/applications/luci-app-dogcom
 rm -rf feeds/luci/themes/luci-theme-argon
@@ -253,7 +252,7 @@ EOF
 cat >> .config <<EOF
 # CONFIG_PACKAGE_luci-app-oaf=n #应用过滤
 CONFIG_PACKAGE_luci-app-openclash=y #OpenClash客户端
-# CONFIG_PACKAGE_luci-app-serverchan=y #微信推送
+CONFIG_PACKAGE_luci-app-serverchan=y #微信推送
 # CONFIG_PACKAGE_luci-app-eqos=n #IP限速
 # CONFIG_PACKAGE_luci-app-control-weburl=n #网址过滤
 # CONFIG_PACKAGE_luci-app-smartdns=n #smartdns服务器
@@ -262,8 +261,8 @@ CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-poweroff=y #关机（增加关机功能）
 # CONFIG_PACKAGE_luci-app-argon-config=y #argon主题设置
 CONFIG_PACKAGE_luci-theme-atmaterial_new=y #atmaterial 三合一主题
-CONFIG_PACKAGE_luci-theme-neobird=y #neobird 主题
-CONFIG_PACKAGE_luci-theme-design=y #design 主题
+CONFIG_PACKAGE_luci-theme-neobird=n #neobird 主题
+CONFIG_PACKAGE_luci-theme-design=n #design 主题
 CONFIG_PACKAGE_luci-app-autotimeset=n #定时重启系统，网络
 # CONFIG_PACKAGE_luci-app-ddnsto=n #小宝开发的DDNS.to内网穿透
 # CONFIG_PACKAGE_ddnsto=n #DDNS.to内网穿透软件包
