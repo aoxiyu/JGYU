@@ -11,6 +11,7 @@ cat feeds.conf.default
 
 # 添加第三方软件包
 git clone https://github.com/db-one/dbone-packages.git -b 23.05 package/dbone-packages
+git clone https://github.com/asvow/luci-app-tailscale package/luci-app-tailscale
 
 # 更新并安装源
 ./scripts/feeds clean
