@@ -10,7 +10,7 @@ sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/package
 cat feeds.conf.default
 
 # 添加第三方软件包
-git clone https://github.com/aoxiyu/aoxi-package.git package/aoxi-package
+git clone https://github.com/db-one/dbone-packages.git -b 23.05 package/dbone-packages
 
 # 更新并安装源
 ./scripts/feeds clean
